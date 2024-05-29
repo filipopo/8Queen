@@ -1,0 +1,10 @@
+table {
+  margin: 0 auto;
+}
+
+td {
+  width: 25px;
+  height: 25px;
+  color: black;
+  font-weight: 800;
+}
