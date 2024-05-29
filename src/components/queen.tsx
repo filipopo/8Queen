@@ -51,19 +51,33 @@ function DrawingBoard({board, callback}: DrawingBoardProps) {
   return board.table({handleMouse: callback})
 }
 
-function intersects(queens: Set<string>, boardSize: number) {
+function intersects(queens: Set<string>, boardSize: number, diagonals = true) {
   for (const q of queens) {
     const [r, c] = q.split(' ').map(e => Number(e))
 
-    for (let i = 1; i < boardSize; i++) {
-      if (queens.has(`${r - i} ${c - i}`)) return true
-      if (queens.has(`${r - i} ${c}`)) return true
-      if (queens.has(`${r - i} ${c + i}`)) return true
-      if (queens.has(`${r} ${c + i}`)) return true
-      if (queens.has(`${r + i} ${c + i}`)) return true
-      if (queens.has(`${r + i} ${c}`)) return true
-      if (queens.has(`${r + i} ${c - i}`)) return true
-      if (queens.has(`${r} ${c - i}`)) return true
+    if (diagonals) {
+      for (let i = 1; i < boardSize; i++) {
+        if (queens.has(`${r - i} ${c - i}`)) return true
+        if (queens.has(`${r - i} ${c}`)) return true
+        if (queens.has(`${r - i} ${c + i}`)) return true
+        if (queens.has(`${r} ${c + i}`)) return true
+        if (queens.has(`${r + i} ${c + i}`)) return true
+        if (queens.has(`${r + i} ${c}`)) return true
+        if (queens.has(`${r + i} ${c - i}`)) return true
+        if (queens.has(`${r} ${c - i}`)) return true
+      }
+    } else {
+      if (queens.has(`${r - 1} ${c - 1}`)) return true
+      if (queens.has(`${r - 1} ${c + 1}`)) return true
+      if (queens.has(`${r + 1} ${c + 1}`)) return true
+      if (queens.has(`${r + 1} ${c - 1}`)) return true
+
+      for (let i = 1; i < boardSize; i++) {
+        if (queens.has(`${r - i} ${c}`)) return true
+        if (queens.has(`${r} ${c + i}`)) return true
+        if (queens.has(`${r + i} ${c}`)) return true
+        if (queens.has(`${r} ${c - i}`)) return true
+      }
     }
   }
 
@@ -82,7 +96,12 @@ function incrementCounter(counter: {[k: string]: number[]}): boolean {
   return carry === 0
 }
 
-function QueenSolver({board}: {board: Board}) {
+interface QueenSolverProps {
+  board: Board
+  diagonals?: boolean
+}
+
+function QueenSolver({board, diagonals = true}: QueenSolverProps) {
   const regions: {[k: string]: string[]} = {}
   for (const arr of Object.entries(board.regions))
     regions[arr[1]] = [...(regions[arr[1]] || []), arr[0]]
@@ -96,9 +115,9 @@ function QueenSolver({board}: {board: Board}) {
     queens = new Set<string>()
     for (const color in regions)
       queens.add(regions[color][counter[color][0]]) 
-  } while(incrementCounter(counter) && intersects(queens, board.size))
+  } while(incrementCounter(counter) && intersects(queens, board.size, diagonals))
 
-  if (intersects(queens, board.size))
+  if (intersects(queens, board.size, diagonals))
     return board.table({})
   return board.table({d: queens})
 }

@@ -23,6 +23,7 @@ function App() {
   const [open, setOpen] = useState(false)
   const [selectedColor, setSelectedColor] = useState(colors[1])
   const [regions, setRegions] = useState<{[k: string]: string}>({})
+  const [game, setGame] = useState('')
 
   function handleMouse(e: MouseEvent, cords: number[]) {
     if (e.buttons !== 1)
@@ -70,8 +71,14 @@ function App() {
       <button type="button" onClick={() => setRegions({})}>Clear all</button><br/>
 
       <br/>
-      <DrawingBoard board={board} callback={handleMouse} />
-      <QueenSolver board={board} />
+      <DrawingBoard board={board} callback={handleMouse} /><br/>
+
+      <button type="button" onClick={() => setGame('liqueen')}>Solve for li queens</button><br/>
+      <button type="button" onClick={() => setGame('queen')}>Solve for queens</button><br/>
+      <br/>
+
+      {game === 'liqueen' && <QueenSolver board={board} diagonals={false} />}
+      {game === 'queen' && <QueenSolver board={board} />}
     </>
   )
 }
