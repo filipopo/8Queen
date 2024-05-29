@@ -98,6 +98,8 @@ function QueenSolver({board}: {board: Board}) {
       queens.add(regions[color][counter[color][0]]) 
   } while(incrementCounter(counter) && intersects(queens, board.size))
 
+  if (intersects(queens, board.size))
+    return board.table({})
   return board.table({d: queens})
 }
 
